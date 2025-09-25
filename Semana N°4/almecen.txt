@@ -1,0 +1,87 @@
+CREATE TABLE `Categoria` (
+  `cod_Categoria` CHAR(6) PRIMARY KEY,
+  `nombre` VARCHAR(30) NOT NULL
+);
+
+CREATE TABLE `sede` (
+  `Cod_sede` CHAR(6) PRIMARY KEY,
+  `m2` DECIMAL(10,2) NOT NULL,
+  `aforo` VARCHAR(25) NOT NULL,
+  `Nr_pisos` INT NOT NULL
+);
+
+CREATE TABLE `Direccion` (
+  `id_direccion` CHAR(6) PRIMARY KEY,
+  `departamento` VARCHAR(25) NOT NULL,
+  `distrito` VARCHAR(25) NOT NULL,
+  `provincia` VARCHAR(25) NOT NULL,
+  `detalleDireccion` VARCHAR(100) NOT NULL,
+  `referencia` VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE `Cliente` (
+  `id_Cliente` CHAR(6) PRIMARY KEY,
+  `nombres` VARCHAR(25) NOT NULL,
+  `apellidos` VARCHAR(25) NOT NULL,
+  `id_direccion` CHAR(6),
+  `fono` VARCHAR(15) NOT NULL,
+  `email` VARCHAR(100) NOT NULL,
+  FOREIGN KEY (`id_direccion`) REFERENCES `Direccion`(`id_direccion`)
+);
+
+CREATE TABLE `Cargos` (
+  `Cod_Cargo` CHAR(6) PRIMARY KEY,
+  `Nombre_Cargo` VARCHAR(25) NOT NULL,
+  `Sueldo_basico` DECIMAL(10,2) NOT NULL
+);
+
+CREATE TABLE `Empleado` (
+  `Cod_emple` CHAR(6) PRIMARY KEY,
+  `nombres` VARCHAR(25) NOT NULL,
+  `apellidos` VARCHAR(25) NOT NULL,
+  `DNI_Emple` CHAR(8) NOT NULL,
+  `Estado_civil` VARCHAR(10) NOT NULL,
+  `telefono` VARCHAR(15) NOT NULL,
+  `email` VARCHAR(100) NOT NULL,
+  `fecha_ingre` DATE NOT NULL,
+  `id_direccion` CHAR(6),
+  `Cod_sede` CHAR(6),
+  `Cod_Cargo` CHAR(6),
+  FOREIGN KEY (`id_direccion`) REFERENCES `Direccion`(`id_direccion`),
+  FOREIGN KEY (`Cod_sede`) REFERENCES `sede`(`Cod_sede`),
+  FOREIGN KEY (`Cod_Cargo`) REFERENCES `Cargos`(`Cod_Cargo`)
+);
+
+CREATE TABLE `Producto` (
+  `id_Producto` CHAR(6) PRIMARY KEY,
+  `Descripcion` VARCHAR(100) NOT NULL,
+  `precio_venta` DECIMAL(10,2) NOT NULL,
+  `stock_minimo` INT NOT NULL,
+  `stock_actual` INT NOT NULL,
+  `cod_Categoria` CHAR(6),
+  `Cod_sede` CHAR(6) NOT NULL,
+  `Marca` VARCHAR(10) NOT NULL,
+  `Modelo` VARCHAR(25) NOT NULL,
+  FOREIGN KEY (`cod_Categoria`) REFERENCES `Categoria`(`cod_Categoria`),
+  FOREIGN KEY (`Cod_sede`) REFERENCES `sede`(`Cod_sede`)
+);
+
+CREATE TABLE `Boleta` (
+  `num_Boleta` CHAR(6) PRIMARY KEY,
+  `Fecha_emi` DATE NOT NULL,
+  `id_Cliente` CHAR(6),
+  `Cod_Emple` CHAR(6),
+  `Estado_Boleta` VARCHAR(10) NOT NULL,
+  `total` DECIMAL(10,2) NOT NULL,
+  FOREIGN KEY (`id_Cliente`) REFERENCES `Cliente`(`id_Cliente`),
+  FOREIGN KEY (`Cod_Emple`) REFERENCES `Empleado`(`Cod_emple`)
+);
+
+CREATE TABLE `Detalle_Boleta` (
+  `id_detalle` INT AUTO_INCREMENT PRIMARY KEY,
+  `num_Boleta` CHAR(6),
+  `id_Producto` CHAR(6),
+  `Cantidad` INT NOT NULL,
+  `importe` DECIMAL(10,2) NOT NULL,
+  FOREIGN KEY (`num_Boleta`) REFERENCES `Boleta`(`num_Boleta`),
+  FOREIGN KEY (`id_Producto`) REFERENCES `Producto`(`id_Producto`)
